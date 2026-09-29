@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "description": "React + TypeScript UI for the todo app.",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "vite",
     "typecheck": "tsc --noEmit",

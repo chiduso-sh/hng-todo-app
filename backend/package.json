@@ -5,6 +5,9 @@
   "type": "module",
   "description": "Express API for the todo app. Plain JavaScript, Node.js.",
   "main": "server.js",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "node --watch server.js",
     "start": "node server.js"
