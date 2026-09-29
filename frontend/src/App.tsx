@@ -42,14 +42,24 @@ export default function App() {
   const [filter, setFilter] = useState<Filter>('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [slowToLoad, setSlowToLoad] = useState(false);
 
   // Load the list once, when the app first appears on screen.
   useEffect(() => {
+    // The API sleeps when nobody has used it for a while, and waking it can
+    // take the best part of a minute. After a few seconds of silence, say so —
+    // otherwise a first-time visitor assumes the app is broken.
+    const timer = setTimeout(() => setSlowToLoad(true), 4000);
+
     api
       .fetchTodos()
       .then((loaded) => setTodos(loaded))
       .catch((err: unknown) => setError(describeError(err)))
       .finally(() => setLoading(false));
+
+    // Returning a function is how an effect cleans up after itself. If this
+    // component ever goes away mid-load, the pending timer goes with it.
+    return () => clearTimeout(timer);
   }, []);
 
   /**
@@ -125,7 +135,15 @@ export default function App() {
       </nav>
 
       {loading ? (
-        <p className="empty">Loading your tasks…</p>
+        <p className="empty">
+          Loading your tasks…
+          {slowToLoad && (
+            <span className="empty-note">
+              The API is hosted on a free plan that sleeps when idle, so this
+              first load can take up to a minute. Later ones are quick.
+            </span>
+          )}
+        </p>
       ) : (
         <TodoList
           todos={visible}

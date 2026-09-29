@@ -281,6 +281,14 @@ body {
   font-size: 14px;
 }
 
+.empty-note {
+  display: block;
+  max-width: 34em;
+  margin: 8px auto 0;
+  font-size: 13px;
+  opacity: 0.8;
+}
+
 @media (max-width: 480px) {
   .todo {
     flex-direction: column;
