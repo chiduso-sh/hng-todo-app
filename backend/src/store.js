@@ -13,8 +13,11 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = path.join(here, '..', 'data');
-const DATA_FILE = path.join(DATA_DIR, 'todos.json');
+
+// TODO_DATA_FILE lets the tests point at a throwaway file instead of the real
+// list. Nothing else sets it, so normal runs use data/todos.json as before.
+const DATA_FILE = process.env.TODO_DATA_FILE ?? path.join(here, '..', 'data', 'todos.json');
+const DATA_DIR = path.dirname(DATA_FILE);
 
 let todos = null;
 

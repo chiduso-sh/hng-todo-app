@@ -92,12 +92,18 @@ being stored.
 ## Checking your work
 
 ```bash
-npm run typecheck   # TypeScript, strict mode, on the frontend
+npm test            # 44 tests across both halves
+npm run typecheck   # TypeScript, strict mode
 npm run build       # typechecks, then produces frontend/dist
 ```
 
-`npm run build` fails if the types are wrong, so a broken build never gets
-deployed.
+The tests use Node's own built-in runner, so there is nothing extra to install
+and no server to start first — the API tests spin the app up themselves on a
+spare port and write to a temporary file, never to your real `data/todos.json`.
+
+They cover the validation rules, all five endpoints, and the date maths behind
+the deadline badges. `npm run build` fails if the types are wrong, so a broken
+build never gets deployed.
 
 ## Deploying
 

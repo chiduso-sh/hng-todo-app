@@ -37,6 +37,7 @@ backend/
   src/store.js           the ONLY file that touches stored data
   src/validate.js        the ONLY file that decides if input is acceptable
   data/todos.json        the saved list (git-ignored, created on first write)
+  tests/                 node --test suites: validate.test.js, api.test.js
 
 frontend/
   src/main.tsx           mounts React
@@ -46,6 +47,7 @@ frontend/
   src/deadline.ts        date maths and the badge wording
   src/components/        TodoForm, TodoList, TodoItem
   src/styles.css         all styling
+  tests/                 node --test suites (TypeScript, run directly)
 ```
 
 **The "only file" lines above are the main rule of this codebase.** If a change
@@ -72,9 +74,9 @@ server was actually restarted.
 
 ## 5. Rules for changing code
 
-1. **Run `npm run typecheck` before calling a frontend change done.** It is the
-   only automated check in this repo. A change that does not typecheck is not
-   finished.
+1. **Run `npm test` and `npm run typecheck` before calling a change done.**
+   Those two are the automated checks in this repo. A change that fails either
+   is not finished.
 2. **`strict` mode stays on.** Never silence a type error with `any`, a double
    cast, or `@ts-ignore`. If the type is fighting you, the runtime shape is
    probably wrong — fix that instead.
@@ -134,17 +136,30 @@ moment you touch only one.
 
 ## 7. How to verify a change
 
-There is no test suite yet. Until there is, verify by hand and report what you
-actually checked.
+Run the tests first:
 
 ```bash
-curl http://localhost:4000/api/todos
-curl -X POST http://localhost:4000/api/todos -H "Content-Type: application/json" -d "{\"title\":\"test\",\"deadline\":\"2026-10-01\"}"
+npm test
 ```
 
-Then in the browser: add a task, edit it, tick it, delete it, and reload the
-page to confirm it persisted. Check the deadline badge against a date in the
-past, today, and next week.
+44 tests, no dependencies beyond Node itself:
+
+- `backend/tests/validate.test.js` — every validation rule as a pure function
+  call. The cheapest tests here; add to these first.
+- `backend/tests/api.test.js` — starts the real Express app on a spare port and
+  talks to it over HTTP. It writes to a temporary file, never to your real
+  `data/todos.json`, via `TODO_DATA_FILE`.
+- `frontend/tests/deadline.test.ts` — the date maths behind the badges. Node 24
+  runs TypeScript directly, so this needs no test framework. Dates are built
+  relative to today, so the tests do not rot.
+
+**When you add behaviour, add a test for it in the same change.** If you are
+unsure a test is worth writing, break the code on purpose and see whether
+anything goes red; if nothing does, the test was worth writing.
+
+Tests do not cover the React components, so anything touching the UI still
+needs checking by hand: add a task, edit it, tick it, delete it, and reload to
+confirm it persisted.
 
 Do not report a change as working on the strength of the code alone.
 
@@ -155,8 +170,8 @@ Do not "fix" these unless asked:
 - **No authentication.** Every visitor sees the same list.
 - **No database.** The JSON file is rewritten in full on every change. Fine at
   this size; replace `store.js` when it stops being fine.
-- **No tests.** The obvious first one is `node --test` over `validate.js`,
-  which is pure functions and needs no server.
+- **No component tests.** `validate.js`, the API and the deadline maths are
+  covered; the React components are not.
 - **Last write wins.** Two browsers editing at once will clobber each other.
 - **`data/` is not persistent on most free hosts.** A free Render or Railway
   instance wipes it on redeploy. Expected until a real database lands.
@@ -165,9 +180,9 @@ Do not "fix" these unless asked:
 
 Roughly in order of value for effort:
 
-1. Tests for `validate.js` with `node --test` — pure functions, no setup.
-2. Search across titles and notes.
-3. A priority or tag field — the same edit-and-validate path as `notes`.
+1. Search across titles and notes.
+2. A priority or tag field — the same edit-and-validate path as `notes`.
+3. Component tests, if the UI grows enough to need them.
 4. Deadline reminders, or a "due this week" view.
 5. Swap the JSON file for SQLite or Postgres; only `store.js` changes.
 6. Accounts, once there is a database to hang them off.

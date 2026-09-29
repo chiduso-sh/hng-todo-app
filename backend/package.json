@@ -10,6 +10,7 @@
   },
   "scripts": {
     "dev": "node --watch server.js",
+    "test": "node --test",
     "start": "node server.js"
   },
   "dependencies": {
