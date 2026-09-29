@@ -2,6 +2,8 @@
 
 A todo list app with notes, deadlines, editing and deleting.
 
+**Live:** https://hng-todo-app-kohl.vercel.app
+
 - **Frontend** — React + TypeScript, built with Vite
 - **Backend** — Node.js + Express, plain JavaScript
 - **Storage** — a JSON file on the server
