@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.env
+.env.local
+
+# The JSON "database" is local data, not source code.
+backend/data/

@@ -1,0 +1,13 @@
+{
+  "name": "todo-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Todo list app — React + TypeScript frontend, Node.js + Express backend.",
+  "scripts": {
+    "install:all": "npm install --prefix backend && npm install --prefix frontend",
+    "dev:api": "npm run dev --prefix backend",
+    "dev:web": "npm run dev --prefix frontend",
+    "typecheck": "npm run typecheck --prefix frontend",
+    "build": "npm run build --prefix frontend"
+  }
+}
